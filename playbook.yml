@@ -1,0 +1,27 @@
+---
+- hosts: localhost
+  become: true
+  become_method: sudo
+  vars:
+           num_containers: 1
+           name_image: nginx-test-image
+           name_container: nginx-test-container
+  tasks:
+          - name: Build Nginx image
+            docker_image:
+              path: ./
+              name: "{{ name_image }}"
+              state: present 
+            vars:
+              ansible_python_interpreter: /bin/python3
+          - name: Create Nginx container
+            docker_container:
+              name: "{{ name_container }}"
+              image: "{{ name_image }}"
+              state: started
+              ports: "80:80"
+            with_sequence: count={{ num_containers }}
+
+
+
+            
